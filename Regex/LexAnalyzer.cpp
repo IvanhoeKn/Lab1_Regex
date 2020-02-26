@@ -14,8 +14,6 @@ bool LexAnalyzer::check() {
 	if (str.length() <= 80) {
 		smatch splitInGroup;
 		result = regex_match(str, splitInGroup, templateRg, regex_constants::match_default);
-		for (auto it = splitInGroup.begin(); it < splitInGroup.end(); ++it)
-			cout << "\"" << *it << "\"" << endl;
 		if (result && splitInGroup.size() > 2) {
 			string portNumber = splitInGroup[2];
 			if (portNumber[0] == ':' && !checkPort(portNumber))
@@ -79,7 +77,7 @@ void LexAnalyzer::commit(bool outCode, ofstream& output) {
 }
 
 void LexAnalyzer::printStatistic(ofstream& output) {
-	map <string, int> ::iterator it = statistic.begin();
-	for (it; it != statistic.end(); it++)
-		output << "Server name: \"" << (*it).first << "\" encountered " << it->second << endl;
+	auto it = statistic.begin();
+	for (; it != statistic.end(); it++)
+		output << "Server name: \"" << it->first << "\" encountered " << it->second << endl;
 }
