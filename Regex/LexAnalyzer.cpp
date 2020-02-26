@@ -14,19 +14,23 @@ bool LexAnalyzer::check() {
 	if (str.length() <= 80) {
 		smatch splitInGroup;
 		result = regex_match(str, splitInGroup, templateRg, regex_constants::match_default);
+		for (auto it = splitInGroup.begin(); it < splitInGroup.end(); ++it)
+			cout << "\"" << *it << "\"" << endl;
 		if (result && splitInGroup.size() > 2) {
 			string portNumber = splitInGroup[2];
 			if (portNumber[0] == ':' && !checkPort(portNumber))
 				result = false;
-			else
-				saveStatistic(portNumber);
+		}
+		if (result) {
+			string serverName = splitInGroup[1];
+			saveStatistic(serverName);
 		}
 	}
 	return result;
 }
 
 void LexAnalyzer::CheckString(istream& input, ofstream& output) {
-	getline(input, str, '\n');
+	getline(input, str);
 	bool result = check();
 	commit(result, output);
 	str.clear();
@@ -53,7 +57,7 @@ bool LexAnalyzer::checkPort(string& portNumber) {
 }
 
 void LexAnalyzer::saveStatistic(string& serverName) {
-	serverName.erase(0, 7);
+	//serverName.erase(0, 7);
 	if (statistic.find(serverName) == statistic.end())
 		statistic.insert(pair<string, int>(serverName, 1));
 	else
@@ -61,11 +65,12 @@ void LexAnalyzer::saveStatistic(string& serverName) {
 }
 
 void LexAnalyzer::commit(bool outCode, ofstream& output) {
-	if (!output)
+	if (!output.is_open()) {
 		if (outCode)
 			cout << "Acceptable string! \"" << str << "\"\n";
 		else
 			cout << "Unacceptable string! \"" << str << "\"\n";
+	}
 	else
 		if (outCode)
 			output << "Acceptable string! \"" << str << "\"\n";
@@ -76,5 +81,5 @@ void LexAnalyzer::commit(bool outCode, ofstream& output) {
 void LexAnalyzer::printStatistic(ofstream& output) {
 	map <string, int> ::iterator it = statistic.begin();
 	for (it; it != statistic.end(); it++)
-		output << "Server name: \"" << it->first << "\" encountered " << it->second << endl;
+		output << "Server name: \"" << (*it).first << "\" encountered " << it->second << endl;
 }

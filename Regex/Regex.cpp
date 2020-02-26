@@ -44,11 +44,14 @@ int main() {
 				else
 					return 0;
 				_time = time(0);
-				while (!input.eof()) {
+				while (!input.eof())
 					Context.CheckString(input, output);
-				}
 				Context.printStatistic(Statistic);
 				Statistic << "\nElapsed time: " << time(0) - _time << " seconds (" << clock() - _clock << " clock ticks)." << endl;
+				input.close();
+				output.close();
+				Statistic.close();
+				cout << "Well Done!" << endl;
 				break;
 			case 2:
 				cout << " You choose working with console!" << endl;
@@ -92,7 +95,7 @@ int Answer(const std::string alt[], int n) {
 
 int OpenInput(ifstream& input, const string& nameFile) {
 	try {
-		input.open("nameFile");
+		input.open("input.txt");
 	}
 	catch (ios_base::failure & ErrCode) {
 		cout << "Can't open \"" << nameFile << "\" - " << ErrCode.what() << endl;
@@ -101,6 +104,10 @@ int OpenInput(ifstream& input, const string& nameFile) {
 	catch (bad_alloc & ErrCode)
 	{
 		std::cout << "Memory error - " << ErrCode.what() << endl;
+		return 1;
+	}
+	if (input.fail()) {
+		std::cout << "Can't open \"" << nameFile << "\"" << endl;
 		return 1;
 	}
 	return 0;
@@ -116,6 +123,10 @@ int OpenOutput(ofstream& output, const string& nameFile) {
 	}
 	catch (bad_alloc & ErrCode) {
 		std::cout << "Memory error - " << ErrCode.what() << endl;
+		return 1;
+	}
+	if (output.fail()) {
+		std::cout << "Can't open \"" << nameFile << "\"" << endl;
 		return 1;
 	}
 	return 0;
